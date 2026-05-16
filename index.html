@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain SaaS Tunisie | Creation & Gestion de Societes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0f1e; color: #e0e6f0; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1a237e, #283593); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.4rem; font-weight: 700; color: #fff; }
+    header span { font-size: 0.8rem; background: #ff6b35; color: white; padding: 4px 10px; border-radius: 20px; }
+    .hero { text-align: center; padding: 80px 20px 60px; background: linear-gradient(180deg, #0d1633 0%, #0a0f1e 100%); }
+    .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(90deg, #4fc3f7, #81d4fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.1rem; color: #90a4ae; max-width: 600px; margin: 0 auto 40px; }
+    .cta-btn { display: inline-block; background: linear-gradient(135deg, #1565c0, #1976d2); color: white; padding: 15px 40px; border-radius: 30px; font-size: 1rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; transition: transform 0.2s; }
+    .cta-btn:hover { transform: scale(1.05); }
+    .features { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; padding: 60px 40px; }
+    .feature-card { background: #1a2744; border: 1px solid #2a3f7e; border-radius: 16px; padding: 30px; width: 260px; text-align: center; transition: transform 0.2s, border-color 0.2s; }
+    .feature-card:hover { transform: translateY(-4px); border-color: #4fc3f7; }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: #e0e6f0; }
+    .feature-card p { font-size: 0.85rem; color: #78909c; line-height: 1.6; }
+    .contact { background: #0d1633; padding: 60px 40px; text-align: center; }
+    .contact h2 { font-size: 1.8rem; margin-bottom: 30px; }
+    .contact form { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin: 0 auto; }
+    .contact input, .contact textarea { background: #1a2744; border: 1px solid #2a3f7e; color: #e0e6f0; padding: 14px 18px; border-radius: 10px; font-size: 0.95rem; outline: none; }
+    .contact textarea { height: 120px; resize: vertical; }
+    .contact input:focus, .contact textarea:focus { border-color: #4fc3f7; }
+    #msg-status { color: #4fc3f7; font-size: 0.9rem; min-height: 20px; }
+    footer { text-align: center; padding: 30px; color: #546e7a; font-size: 0.8rem; background: #060b18; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Second Brain SaaS Tunisie</h1>
+  <span>Beta v0.1</span>
+</header>
+
+<section class="hero">
+  <h2>Cree et Gere ta Societe en Tunisie</h2>
+  <p>Une plateforme intelligente pour simplifier la creation, la gestion administrative et financiere de ton entreprise en Tunisie.</p>
+  <button class="cta-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre la Beta</button>
+</section>
+
+<section class="features">
+  <div class="feature-card">
+    <div class="icon">🏢</div>
+    <h3>Creation de Societe</h3>
+    <p>Guide pas-a-pas pour creer ta SARL, SUARL, SA ou auto-entreprise en Tunisie.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📊</div>
+    <h3>Gestion Administrative</h3>
+    <p>Tableau de bord centralise pour ton registre de commerce, patente, et documents officiels.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">💰</div>
+    <h3>Fiscalite Simplifiee</h3>
+    <p>Suivi des obligations fiscales : TVA, IS, CNSS, et calendrier de declarations.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🤖</div>
+    <h3>Assistant IA</h3>
+    <p>Conseils juridiques et fiscaux personalises, disponibles 24h/24 via l IA.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📱</div>
+    <h3>Alertes & Rappels</h3>
+    <p>Notifications Telegram pour ne jamais rater une echeance administrative.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🔒</div>
+    <h3>Securite & Conformite</h3>
+    <p>Tes donnees protegees et conformes aux reglementations tunisiennes.</p>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <h2>Rejoindre la Beta</h2>
+  <form id="contactForm">
+    <input type="text" id="name" placeholder="Ton nom" required />
+    <input type="email" id="email" placeholder="Ton email" required />
+    <textarea id="message" placeholder="Dis-nous pourquoi tu veux rejoindre la beta..."></textarea>
+    <button type="submit" class="cta-btn">Envoyer</button>
+    <p id="msg-status"></p>
+  </form>
+</section>
+
+<footer>
+  &copy; 2026 Second Brain SaaS Tunisie &mdash; Fait avec passion pour les entrepreneurs tunisiens
+</footer>
+
+<script>
+  const API = window.location.origin;
+  document.getElementById('contactForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('msg-status');
+    status.textContent = 'Envoi en cours...';
+    try {
+      const r = await fetch(API + '/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          message: document.getElementById('message').value
+        })
+      });
+      const d = await r.json();
+      status.textContent = d.message || 'Merci !';
+      e.target.reset();
+    } catch(err) {
+      status.textContent = 'Erreur reseau, reessaie.';
+    }
+  });
+</script>
+</body>
+</html>
