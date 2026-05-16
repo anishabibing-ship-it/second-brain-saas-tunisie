@@ -1,0 +1,28 @@
+name: SaaS Dev Hebdomadaire
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run
+        env:
+          OR_KEY: ${{ vars.OPENROUTER_API_KEY }}
+          TG_TOKEN: ${{ vars.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ vars.TELEGRAM_CHAT_ID }}
+        run: |
+          cat > /tmp/r.py << 'PYEOF'
+          import urllib.request, urllib.parse, json, os
+          K = os.environ['OR_KEY']
+          T = os.environ['TG_TOKEN']
+          C = os.environ['TG_CHAT']
+          body = json.dumps({'model':'google/gemini-2.5-flash-preview','messages':[{'role':'user','content':'Tu es CTO expert SaaS B2B pour la Tunisie. Propose une iteration de developpement concrete pour une app SaaS de creation et gestion de societes en Tunisie. Inclus: fonctionnalite a developper, stack technique, etapes. Sois actionnable.'}]})
+          req = urllib.request.Request('https://openrouter.ai/api/v1/chat/completions',data=body.encode(),headers={'Authorization':'Bearer '+K,'Content-Type':'application/json'})
+          resp = json.loads(urllib.request.urlopen(req).read())
+          msg = resp['choices'][0]['message']['content']
+          tg = urllib.request.Request('https://api.telegram.org/bot'+T+'/sendMessage',data=urllib.parse.urlencode({'chat_id':C,'text':'SaaS Dev Iteration:\n'+msg}).encode())
+          urllib.request.urlopen(tg)
+          PYEOF
+          python3 /tmp/r.py
