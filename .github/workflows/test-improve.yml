@@ -1,0 +1,52 @@
+name: Test et Amelioration SaaS
+on:
+  schedule:
+    - cron: "0 18 * * 5"
+  workflow_dispatch:
+jobs:
+  test-improve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test site et suggestions IA
+        env:
+          OR_KEY: ${{ vars.OPENROUTER_API_KEY }}
+          TG_TOKEN: ${{ vars.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ vars.TELEGRAM_CHAT_ID }}
+        run: |
+          cat > /tmp/test.py << 'PYEOF'
+          import urllib.request, urllib.parse, json, os
+          K = os.environ['OR_KEY']
+          T = os.environ['TG_TOKEN']
+          C = os.environ['TG_CHAT']
+          SITE = 'https://anishabibing-ship-it.github.io/second-brain-saas-tunisie/'
+          try:
+            resp = urllib.request.urlopen(SITE, timeout=10)
+            status = resp.getcode()
+            html = resp.read().decode('utf-8', errors='replace')[:3000]
+            site_ok = 'OK (HTTP ' + str(status) + ')'
+          except Exception as ex:
+            html = ''
+            site_ok = 'ERREUR: ' + str(ex)
+          prompt = 'Tu es expert UX et dev web. Voici les 3000 premiers caracteres du site SaaS Tunisie:\n' + html + '\n\nSite status: ' + site_ok + '\n\nSuggest 3 ameliorations concretes et prioritaires pour la prochaine version. Sois concis.'
+          body = json.dumps({'model':'google/gemini-2.5-flash-preview','messages':[{'role':'user','content':prompt}]})
+          req = urllib.request.Request('https://openrouter.ai/api/v1/chat/completions',data=body.encode(),headers={'Authorization':'Bearer '+K,'Content-Type':'application/json'})
+          ai = json.loads(urllib.request.urlopen(req).read())
+          msg = ai['choices'][0]['message']['content']
+          text = 'Site: ' + site_ok + '\n\nAmeliorations v prochaine:\n' + msg
+          tg = urllib.request.Request('https://api.telegram.org/bot'+T+'/sendMessage',data=urllib.parse.urlencode({'chat_id':C,'text':text}).encode())
+          urllib.request.urlopen(tg)
+          PYEOF
+          python3 /tmp/test.py
+      - name: Sauvegarder version
+        run: |
+          DATE=$(date +%Y%m%d_%H%M)
+          cp index.html versions/index_${DATE}.html 2>/dev/null || mkdir -p versions && cp index.html versions/index_${DATE}.html
+      - name: Commit version sauvegardee
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add versions/
+          git diff --staged --quiet || git commit -m "Version sauvegardee automatiquement"
+          git push
