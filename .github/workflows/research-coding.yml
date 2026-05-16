@@ -1,0 +1,28 @@
+name: Research Coding Quotidien
+on:
+  schedule:
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run
+        env:
+          OR_KEY: ${{ vars.OPENROUTER_API_KEY }}
+          TG_TOKEN: ${{ vars.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ vars.TELEGRAM_CHAT_ID }}
+        run: |
+          cat > /tmp/r.py << 'PYEOF'
+          import urllib.request, urllib.parse, json, os
+          K = os.environ['OR_KEY']
+          T = os.environ['TG_TOKEN']
+          C = os.environ['TG_CHAT']
+          body = json.dumps({'model':'google/gemini-2.5-flash-preview','messages':[{'role':'user','content':'Tu es expert developpeur. Donne 5 tips importants du jour sur Python, CSS, HTML, JSON ou R pour progresser. Sois concis et pratique.'}]})
+          req = urllib.request.Request('https://openrouter.ai/api/v1/chat/completions',data=body.encode(),headers={'Authorization':'Bearer '+K,'Content-Type':'application/json'})
+          resp = json.loads(urllib.request.urlopen(req).read())
+          msg = resp['choices'][0]['message']['content']
+          tg = urllib.request.Request('https://api.telegram.org/bot'+T+'/sendMessage',data=urllib.parse.urlencode({'chat_id':C,'text':'Coding Quotidien:\n'+msg}).encode())
+          urllib.request.urlopen(tg)
+          PYEOF
+          python3 /tmp/r.py
